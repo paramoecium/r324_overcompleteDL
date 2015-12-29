@@ -43,28 +43,34 @@ LABEL_DICT = {
 }
 
 N_ATOM = 50
-TARGET_SPARSITY = 10
+TARGET_SPARSITY = 5
 TRAIN_SET_RATIO = 0.8
 
 def sparse_coding(n_atom, input_x, out_dir):
 	# sklearn random sampled dictionary
+	# sklearn function
 	'''
 	dictionary = random.sample(input_x, n_atom)
 	code = sparse_encode(input_x, dictionary)
 	'''
-	# sklearn function
+	# pyksvd package
 	dictionary, code = KSVD(input_x, n_atom, TARGET_SPARSITY, 100, print_interval = 1)
+	x_recovered = np.dot(code, dictionary)
+	error = [np.linalg.norm(e) for e in (input_x - x_recovered)]
 	#np.set_printoptions(precision=3, suppress=True)
 	#print code
 	#print dictionary
 	with open('{}/atoms'.format(out_dir), "w") as op:
 		for component in dictionary:
 			line = ', '.join(str(round(e,3)) for e in component)
-        		op.write( line + '\n')
+			op.write( line + '\n')
 	with open('{}/codes'.format(out_dir), "w") as op:
 		for coefficient in code:
 			line = ', '.join(str(round(e,3)) for e in coefficient)
-        		op.write( line + '\n')
+			op.write( line + '\n')
+	with open('{}/coding_error'.format(out_dir), "w") as op:
+		for epsilon in error:
+			op.write( str(epsilon) + '\n')
 	return code
 
 def countZeros(input_x):
@@ -133,7 +139,6 @@ if __name__ == '__main__':
 	MEASUREMENT = args['num_measurement']
 
 	data_windowed = np.loadtxt(windowed_file, delimiter=',')
-	data_windowed = data_windowed[:,:26] ## WARNING!!!!!!!!!!!!!!!!!!!!!!truncate, only 26 feature per 10 min
 	print data_windowed.shape
 	with Timer('Normalizing ...'):
 		normalizer = MinMaxScaler() # feature range (0,1)
