@@ -52,7 +52,7 @@ if __name__ == '__main__':
 	#clf = svm.SVC(kernel='rbf', class_weight={0: 60, 1: 3, 2: 1})
 	clf = svm.SVC(kernel='linear', class_weight='auto')
 	#clf = svm.SVC(kernel='polyss', class_weight='auto')
-	C_s = np.logspace(-10, 5, 15)
+	C_s = np.logspace(-5, 10, 15)
 
 	scores = list()
 	scores_std = list()
@@ -64,8 +64,10 @@ if __name__ == '__main__':
 		clf.gamma
 		clf.coef0
 		'''
-		this_scores = cross_validation.cross_val_score(clf, X, Y, n_jobs=4) ## 4 CPU core
+		with Timer('Cross Validation(C={}) ...'.format(C)):
+			this_scores = cross_validation.cross_val_score(clf, X, Y, n_jobs=4) ## 4 CPU core
 		scores.append(np.mean(this_scores))
 		scores_std.append(np.std(this_scores))
+		print "accuracy mean:", scores[-1], "std:", scores_std[-1]
 	print scores
 	print scores_std

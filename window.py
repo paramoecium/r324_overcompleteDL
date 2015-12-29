@@ -43,7 +43,7 @@ def window(input_x, out_dir):
 		print len(data_windowed)
 		for instance_cascade in data_windowed:
 			line = ', '.join(str(e) for e in instance_cascade)
-        		op.write( line + '\n')
+			op.write( line + '\n')
 	return np.array(data_windowed, dtype=np.float)
 
 if __name__ == '__main__':
@@ -64,6 +64,24 @@ if __name__ == '__main__':
 				, delimiter=',').tolist()
 			print "# of data:", len(data)
 			sensor_data.extend(data)
-	with Timer('Sliding Window ...'):    
-		data_windowed = window(sensor_data, out_dir)
+	with Timer('Normalizing ...'):
+		from sklearn.preprocessing import MinMaxScaler
+		normalizer = MinMaxScaler() # feature range (0,1)
+		data_normalized = normalizer.fit_transform(sensor_data)
+	with Timer('Sparse Coding ...'):
+		from reduce import *
+		code = sparse_coding(N_ATOM, data_normalized, out_dir)
+		print 'number of zeros: {}/{}'.format(countZeros(code), code.shape[1])
+	with Timer('Sliding Window ...'):
+		data_windowed = window(code, out_dir)
 		print 'data_windowed:', data_windowed.shape
+	label = readLabel([args['label_filename']])[1:]
+	writeFeature('{}/svm_compressed_total'.format(out_dir), data_windowed, label)
+	'''
+	from reduce import *
+	with Timer('Sliding Window ...'):
+		data_windowed = window(data_normalized, out_dir)
+		print 'data_windowed:', data_windowed.shape
+	label = readLabel([args['label_filename']])[1:]
+	writeFeature('{}/svm_original_total'.format(out_dir), data_windowed, label)
+	'''

@@ -42,7 +42,8 @@ LABEL_DICT = {
 	'vacant': 2,
 }
 
-N_ATOM = 2000
+N_ATOM = 50
+TARGET_SPARSITY = 10
 TRAIN_SET_RATIO = 0.8
 
 def sparse_coding(n_atom, input_x, out_dir):
@@ -52,7 +53,7 @@ def sparse_coding(n_atom, input_x, out_dir):
 	code = sparse_encode(input_x, dictionary)
 	'''
 	# sklearn function
-	dictionary, code = KSVD(input_x, n_atom, 500, 10, print_interval = 1)
+	dictionary, code = KSVD(input_x, n_atom, TARGET_SPARSITY, 100, print_interval = 1)
 	#np.set_printoptions(precision=3, suppress=True)
 	#print code
 	#print dictionary
