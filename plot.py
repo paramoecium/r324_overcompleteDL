@@ -34,8 +34,6 @@ def plot_svm_accuracy():
 	return
 
 def plot_ksvd_error_recover():
-	return
-if __name__ == '__main__':
 	label_file = './truth_data-2014-11-02_to_2014-11-16.txt'
 	error_file = './coding_error'
 	error = np.loadtxt(error_file)
@@ -78,3 +76,24 @@ if __name__ == '__main__':
 			#c = collections.BrokenBarHCollection([(timestamp[0], 86400)], (0,2), facecolor=backgroundColor, alpha=0.5)
 			ax.add_collection(c)
 	plt.show()
+	return
+
+def plot_atom_MDS():
+	from sklearn import manifold
+	from sklearn.metrics import euclidean_distances
+	atom_file = './atoms'
+	atoms = np.loadtxt(atom_file, delimiter=',')
+	similarities = euclidean_distances(atoms)
+	seed = np.random.RandomState(seed=3)
+
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	plt.figure(1, figsize=(4, 3))
+	plt.clf()
+	plt.scatter(pos[:, 0], pos[:, 1], s=20, c='black')
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+	plt.legend(('atoms', 'XXX'), loc='best')
+	plt.show()
+	return
+if __name__ == '__main__':

@@ -48,7 +48,6 @@ if __name__ == '__main__':
 
 	## SVM training
 	X, Y = readFeature(svm_file_path, MEASUREMENT)
-
 	#clf = svm.SVC(kernel='rbf', class_weight={0: 60, 1: 3, 2: 1})
 	clf = svm.SVC(kernel='linear', class_weight='auto')
 	#clf = svm.SVC(kernel='polyss', class_weight='auto')
