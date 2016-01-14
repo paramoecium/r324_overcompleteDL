@@ -37,17 +37,7 @@ def readFeature(fileName, featureNum):
 			labels.append(int(line[0]))
 	return features, labels
 
-if __name__ == '__main__':
-	argparser = argparse.ArgumentParser()
-	argparser.add_argument('svm_file', type=str, help='the file in libsvm format')
-	argparser.add_argument('num_measurement', type=str, help='number of measurements')
-	args = argparser.parse_args()
-	args = vars(args)
-	svm_file_path = args['svm_file']
-	MEASUREMENT = int(args['num_measurement'])
-
-	## SVM training
-	X, Y = readFeature(svm_file_path, MEASUREMENT)
+def bracketing(X, Y):
 	#clf = svm.SVC(kernel='rbf', class_weight={0: 60, 1: 3, 2: 1})
 	clf = svm.SVC(kernel='linear', class_weight='auto')
 	#clf = svm.SVC(kernel='polyss', class_weight='auto')
@@ -70,3 +60,26 @@ if __name__ == '__main__':
 		print "accuracy mean:", scores[-1], "std:", scores_std[-1]
 	print scores
 	print scores_std
+
+def best_CV_prediction(X, Y):
+	X = np.array(X)
+	best_svm_C = 26.8269579528
+	clf = svm.SVC(kernel='linear', class_weight='auto')
+	clf.C = best_svm_C
+	with Timer('Cross Validation Prediction(C={}) ...'.format(best_svm_C)):
+		Y_predicted = cross_validation.cross_val_predict(clf, X, Y, n_jobs=4) ## 4 CPU core
+	print confusion_matrix(Y_predicted, Y)
+	print f1_score(Y_predicted, Y, average='weighted')
+
+if __name__ == '__main__':
+	argparser = argparse.ArgumentParser()
+	argparser.add_argument('svm_file', type=str, help='the file in libsvm format')
+	argparser.add_argument('num_measurement', type=str, help='number of measurements')
+	args = argparser.parse_args()
+	args = vars(args)
+	svm_file_path = args['svm_file']
+	MEASUREMENT = int(args['num_measurement'])
+
+	X, Y = readFeature(svm_file_path, MEASUREMENT)
+	#bracketing(X, Y)
+	best_CV_prediction(X, Y)

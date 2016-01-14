@@ -74,7 +74,8 @@ if __name__ == '__main__':
 	X_test, Y_test = readFeature('{}/svm_test'.format(out_dir), MEASUREMENT)
 
 	#clf = svm.SVC(kernel='rbf', class_weight={0: 60, 1: 3, 2: 1})
-	clf = svm.SVC(kernel='poly', class_weight={0: 60, 1: 3, 2: 1})
+	#clf = svm.SVC(kernel='poly', class_weight={0: 60, 1: 3, 2: 1})	
+	clf = svm.SVC(kernel='linear', class_weight='auto')
 	clf.fit(X_train, Y_train)
 
 	p_labels = clf.predict(X_test)

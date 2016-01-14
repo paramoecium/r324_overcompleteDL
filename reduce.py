@@ -42,11 +42,9 @@ LABEL_DICT = {
 	'vacant': 2,
 }
 
-N_ATOM = 50
-TARGET_SPARSITY = 5
 TRAIN_SET_RATIO = 0.8
 
-def sparse_coding(n_atom, input_x, out_dir):
+def sparse_coding(n_atom, target_s, input_x, out_dir):
 	# sklearn random sampled dictionary
 	# sklearn function
 	'''
@@ -54,7 +52,7 @@ def sparse_coding(n_atom, input_x, out_dir):
 	code = sparse_encode(input_x, dictionary)
 	'''
 	# pyksvd package
-	dictionary, code = KSVD(input_x, n_atom, TARGET_SPARSITY, 100, print_interval = 1)
+	dictionary, code = KSVD(input_x, n_atom, target_s, 100, print_interval = 1)
 	x_recovered = np.dot(code, dictionary)
 	error = [np.linalg.norm(e) for e in (input_x - x_recovered)]
 	#np.set_printoptions(precision=3, suppress=True)
@@ -157,9 +155,4 @@ if __name__ == '__main__':
 		data_reduced = reduction(code, out_dir)
 	#data_reduced = np.loadtxt('{}/projection'.format(out_dir), delimiter=',')
 	label = readLabel([args['label_filename']])[1:]
-	'''
-	cutIndex = int(TRAIN_SET_RATIO*len(data_reduced))
-	writeFeature('{}/svm_train'.format(out_dir), data_reduced[:cutIndex], label[:cutIndex]) 
-	writeFeature('{}/svm_test'.format(out_dir), data_reduced[cutIndex:], label[cutIndex:])
-	'''
 	writeFeature('{}/svm_compressed_total'.format(out_dir), data_reduced, label)

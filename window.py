@@ -70,13 +70,15 @@ if __name__ == '__main__':
 		data_normalized = normalizer.fit_transform(sensor_data)
 	with Timer('Sparse Coding ...'):
 		from reduce import *
-		code = sparse_coding(N_ATOM, data_normalized, out_dir)
+		num_ataom = 50
+		target_sparsity = 10
+		code = sparse_coding(num_ataom, target_sparsity, data_normalized, out_dir)
 		print 'number of zeros: {}/{}'.format(countZeros(code), code.shape[1])
 	with Timer('Sliding Window ...'):
 		data_windowed = window(code, out_dir)
 		print 'data_windowed:', data_windowed.shape
 	label = readLabel([args['label_filename']])[1:]
-	writeFeature('{}/svm_compressed_total'.format(out_dir), data_windowed, label)
+	writeFeature('{}/svm_sparse_windowed_total'.format(out_dir), data_windowed, label)
 	'''
 	from reduce import *
 	with Timer('Sliding Window ...'):

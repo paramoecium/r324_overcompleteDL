@@ -96,4 +96,26 @@ def plot_atom_MDS():
 	plt.legend(('atoms', 'XXX'), loc='best')
 	plt.show()
 	return
+
+def plot_confusion_matrix():
+	cm = [[ 183,   74,   32],[ 143,  918,  160],[ 123,   33, 2365]]
+	cm = np.array(cm)
+	cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+	print cm_normalized
+	plt.figure()
+	title = 'Confusion matrix'
+	cmap = plt.cm.Blues
+	plt.imshow(cm_normalized, interpolation='nearest', cmap=cmap)
+	plt.title(title)
+	plt.colorbar()
+	label_names = np.array(['selfStudy','meeting','vacant'])
+	plt.xticks(np.arange(len(label_names)), label_names, rotation=45)
+	plt.yticks(np.arange(len(label_names)), label_names)
+	plt.tight_layout()
+	plt.ylabel('True label')
+	plt.xlabel('Predicted label')
+	plt.show()
+	return
+	
 if __name__ == '__main__':
+	plot_confusion_matrix()
