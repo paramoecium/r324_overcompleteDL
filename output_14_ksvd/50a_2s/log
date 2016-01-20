@@ -1,0 +1,162 @@
+... open data/merge-2014-11-02_to_2014-11-16.dat with PIR, Light, Sound sensors ...
+# of data: 1209600
+... open data/merge-2014-11-02_to_2014-11-16.dat with PIR, Light, Sound sensors ... done in 0:02:30.890271
+... Normalizing ...
+... Normalizing ... done in 0:00:14.194264
+... Sparse Coding ...
+grad_descent_iterations = 2
+Initialized. 
+
+1.	 Approximation Error (average L2-norm of error over signals) = 0.0006548. 
+2.	 Approximation Error (average L2-norm of error over signals) = 0.000556169. 
+3.	 Approximation Error (average L2-norm of error over signals) = 0.000443596. 
+4.	 Approximation Error (average L2-norm of error over signals) = 0.000424212. 
+5.	 Approximation Error (average L2-norm of error over signals) = 0.000425405. 
+6.	 Approximation Error (average L2-norm of error over signals) = 0.000410746. 
+7.	 Approximation Error (average L2-norm of error over signals) = 0.000393368. 
+8.	 Approximation Error (average L2-norm of error over signals) = 0.000388273. 
+9.	 Approximation Error (average L2-norm of error over signals) = 0.000371417. 
+10.	 Approximation Error (average L2-norm of error over signals) = 0.000366837. 
+11.	 Approximation Error (average L2-norm of error over signals) = 0.000361572. 
+12.	 Approximation Error (average L2-norm of error over signals) = 0.000356544. 
+13.	 Approximation Error (average L2-norm of error over signals) = 0.000354164. 
+14.	 Approximation Error (average L2-norm of error over signals) = 0.000353643. 
+15.	 Approximation Error (average L2-norm of error over signals) = 0.00039354. 
+16.	 Approximation Error (average L2-norm of error over signals) = 0.000364191. 
+17.	 Approximation Error (average L2-norm of error over signals) = 0.000338291. 
+18.	 Approximation Error (average L2-norm of error over signals) = 0.000334957. 
+19.	 Approximation Error (average L2-norm of error over signals) = 0.000332504. 
+20.	 Approximation Error (average L2-norm of error over signals) = 0.00033034. 
+21.	 Approximation Error (average L2-norm of error over signals) = 0.000328653. 
+22.	 Approximation Error (average L2-norm of error over signals) = 0.000327766. 
+23.	 Approximation Error (average L2-norm of error over signals) = 0.00032674. 
+24.	 Approximation Error (average L2-norm of error over signals) = 0.000325742. 
+25.	 Approximation Error (average L2-norm of error over signals) = 0.000324718. 
+26.	 Approximation Error (average L2-norm of error over signals) = 0.000325863. 
+27.	 Approximation Error (average L2-norm of error over signals) = 0.000344282. 
+28.	 Approximation Error (average L2-norm of error over signals) = 0.000334642. 
+29.	 Approximation Error (average L2-norm of error over signals) = 0.000328842. 
+30.	 Approximation Error (average L2-norm of error over signals) = 0.000327056. 
+31.	 Approximation Error (average L2-norm of error over signals) = 0.000326839. 
+32.	 Approximation Error (average L2-norm of error over signals) = 0.000325841. 
+33.	 Approximation Error (average L2-norm of error over signals) = 0.000324323. 
+34.	 Approximation Error (average L2-norm of error over signals) = 0.000322345. 
+35.	 Approximation Error (average L2-norm of error over signals) = 0.000321548. 
+36.	 Approximation Error (average L2-norm of error over signals) = 0.000320647. 
+37.	 Approximation Error (average L2-norm of error over signals) = 0.000320012. 
+38.	 Approximation Error (average L2-norm of error over signals) = 0.00031962. 
+39.	 Approximation Error (average L2-norm of error over signals) = 0.000319201. 
+40.	 Approximation Error (average L2-norm of error over signals) = 0.000318832. 
+41.	 Approximation Error (average L2-norm of error over signals) = 0.000318635. 
+42.	 Approximation Error (average L2-norm of error over signals) = 0.00031929. 
+43.	 Approximation Error (average L2-norm of error over signals) = 0.000318632. 
+44.	 Approximation Error (average L2-norm of error over signals) = 0.000316987. 
+45.	 Approximation Error (average L2-norm of error over signals) = 0.00031417. 
+46.	 Approximation Error (average L2-norm of error over signals) = 0.000313204. 
+47.	 Approximation Error (average L2-norm of error over signals) = 0.000312476. 
+48.	 Approximation Error (average L2-norm of error over signals) = 0.000312536. 
+49.	 Approximation Error (average L2-norm of error over signals) = 0.000314052. 
+50.	 Approximation Error (average L2-norm of error over signals) = 0.000312526. 
+51.	 Approximation Error (average L2-norm of error over signals) = 0.00031133. 
+52.	 Approximation Error (average L2-norm of error over signals) = 0.000309775. 
+53.	 Approximation Error (average L2-norm of error over signals) = 0.000309002. 
+54.	 Approximation Error (average L2-norm of error over signals) = 0.000308638. 
+55.	 Approximation Error (average L2-norm of error over signals) = 0.000308193. 
+56.	 Approximation Error (average L2-norm of error over signals) = 0.000308039. 
+57.	 Approximation Error (average L2-norm of error over signals) = 0.000308113. 
+58.	 Approximation Error (average L2-norm of error over signals) = 0.000307945. 
+59.	 Approximation Error (average L2-norm of error over signals) = 0.000307371. 
+60.	 Approximation Error (average L2-norm of error over signals) = 0.000307685. 
+61.	 Approximation Error (average L2-norm of error over signals) = 0.000307819. 
+62.	 Approximation Error (average L2-norm of error over signals) = 0.000308209. 
+63.	 Approximation Error (average L2-norm of error over signals) = 0.000308585. 
+64.	 Approximation Error (average L2-norm of error over signals) = 0.000309444. 
+65.	 Approximation Error (average L2-norm of error over signals) = 0.000308666. 
+66.	 Approximation Error (average L2-norm of error over signals) = 0.000307818. 
+67.	 Approximation Error (average L2-norm of error over signals) = 0.000307689. 
+68.	 Approximation Error (average L2-norm of error over signals) = 0.000307448. 
+69.	 Approximation Error (average L2-norm of error over signals) = 0.00030806. 
+70.	 Approximation Error (average L2-norm of error over signals) = 0.000306543. 
+71.	 Approximation Error (average L2-norm of error over signals) = 0.00030601. 
+72.	 Approximation Error (average L2-norm of error over signals) = 0.000305865. 
+73.	 Approximation Error (average L2-norm of error over signals) = 0.000305179. 
+74.	 Approximation Error (average L2-norm of error over signals) = 0.000304648. 
+75.	 Approximation Error (average L2-norm of error over signals) = 0.000303697. 
+76.	 Approximation Error (average L2-norm of error over signals) = 0.000303132. 
+77.	 Approximation Error (average L2-norm of error over signals) = 0.000303035. 
+78.	 Approximation Error (average L2-norm of error over signals) = 0.000303312. 
+79.	 Approximation Error (average L2-norm of error over signals) = 0.000301936. 
+80.	 Approximation Error (average L2-norm of error over signals) = 0.000300882. 
+81.	 Approximation Error (average L2-norm of error over signals) = 0.000299822. 
+82.	 Approximation Error (average L2-norm of error over signals) = 0.000299349. 
+83.	 Approximation Error (average L2-norm of error over signals) = 0.000299452. 
+84.	 Approximation Error (average L2-norm of error over signals) = 0.000299324. 
+85.	 Approximation Error (average L2-norm of error over signals) = 0.000299428. 
+86.	 Approximation Error (average L2-norm of error over signals) = 0.00029978. 
+87.	 Approximation Error (average L2-norm of error over signals) = 0.000299788. 
+88.	 Approximation Error (average L2-norm of error over signals) = 0.000300193. 
+89.	 Approximation Error (average L2-norm of error over signals) = 0.000300885. 
+90.	 Approximation Error (average L2-norm of error over signals) = 0.00030143. 
+91.	 Approximation Error (average L2-norm of error over signals) = 0.000299658. 
+92.	 Approximation Error (average L2-norm of error over signals) = 0.000299956. 
+93.	 Approximation Error (average L2-norm of error over signals) = 0.000300775. 
+94.	 Approximation Error (average L2-norm of error over signals) = 0.000300455. 
+95.	 Approximation Error (average L2-norm of error over signals) = 0.000300299. 
+96.	 Approximation Error (average L2-norm of error over signals) = 0.000300141. 
+97.	 Approximation Error (average L2-norm of error over signals) = 0.00030006. 
+98.	 Approximation Error (average L2-norm of error over signals) = 0.000299893. 
+99.	 Approximation Error (average L2-norm of error over signals) = 0.00029993. 
+100.	 Approximation Error (average L2-norm of error over signals) = 0.000299945. number of zeros: 48/50
+... Sparse Coding ... done in 0:17:23.658573
+... Sliding Window ...
+4031
+data_windowed: (4031, 30000)
+... Sliding Window ... done in 0:12:07.227137
+... Cross Validation(C=1e-05) ...
+... Cross Validation(C=1e-05) ...
+... Cross Validation(C=1e-05) ... done in 0:37:06.194777
+accuracy mean: 0.659137085918 std: 0.048125090584
+... Cross Validation(C=0.000117876863479) ...
+... Cross Validation(C=0.000117876863479) ... done in 0:31:46.950829
+accuracy mean: 0.696825726324 std: 0.0728224836209
+... Cross Validation(C=0.00138949549437) ...
+... Cross Validation(C=0.00138949549437) ... done in 0:29:21.307055
+accuracy mean: 0.719639331588 std: 0.064849150547
+... Cross Validation(C=0.0163789370695) ...
+... Cross Validation(C=0.0163789370695) ... done in 0:28:13.507634
+accuracy mean: 0.796759055716 std: 0.0708344391889
+... Cross Validation(C=0.193069772888) ...
+... Cross Validation(C=0.193069772888) ... done in 0:28:30.087039
+accuracy mean: 0.824846564577 std: 0.023803727948
+... Cross Validation(C=2.27584592607) ...
+... Cross Validation(C=2.27584592607) ... done in 0:27:44.628329
+accuracy mean: 0.68552335503 std: 0.181630976738
+... Cross Validation(C=26.8269579528) ...
+... Cross Validation(C=26.8269579528) ... done in 0:28:09.454491
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=316.227766017) ...
+... Cross Validation(C=316.227766017) ... done in 0:27:55.889093
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=3727.59372031) ...
+... Cross Validation(C=3727.59372031) ... done in 0:27:53.654994
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=43939.7056076) ...
+... Cross Validation(C=43939.7056076) ... done in 0:27:54.354585
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=517947.467923) ...
+... Cross Validation(C=517947.467923) ... done in 0:28:16.293383
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=6105402.29659) ...
+... Cross Validation(C=6105402.29659) ... done in 0:27:56.623429
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=71968567.3001) ...
+... Cross Validation(C=71968567.3001) ... done in 0:28:07.906089
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=848342898.244) ...
+... Cross Validation(C=848342898.244) ... done in 0:27:53.854870
+accuracy mean: 0.685275522731 std: 0.181871850321
+... Cross Validation(C=10000000000.0) ...
+... Cross Validation(C=10000000000.0) ... done in 0:28:17.175379
+accuracy mean: 0.685275522731 std: 0.181871850321
+[0.65913708591754938, 0.69682572632421047, 0.71963933158799553, 0.79675905571564964, 0.82484656457666705, 0.68552335502979966, 0.68527552273076831, 0.68527552273076831, 0.68527552273076831, 0.68527552273076831, 0.68527552273076831, 0.68527552273076831, 0.68527552273076831, 0.68527552273076831, 0.68527552273076831]
+[0.048125090584010398, 0.072822483620860107, 0.064849150547046083, 0.070834439188926041, 0.023803727947990207, 0.18163097673752698, 0.18187185032052941, 0.18187185032052941, 0.18187185032052941, 0.18187185032052941, 0.18187185032052941, 0.18187185032052941, 0.18187185032052941, 0.18187185032052941, 0.18187185032052941]

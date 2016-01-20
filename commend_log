@@ -1,2 +1,4 @@
 python window.py data/merge-2014-11-02_to_2014-11-16.dat data/truth_data-2014-11-02_to_2014-11-16.txt output_14_ksvd/50a_5s/ | tee output_14_ksvd/50a_5s/log
 python svm_bracketing.py ./output_14_ksvd/100a_10s/svm_sparse_windowed_total 60000 | tee -a ./output_14_ksvd/100a_10s/log
+python window.py data/merge-2014-09-01_to_2015-01-31.dat data/truth_data-2014-09-01_to_2014-01-31.txt output_112_ksvd/100a_2s/ | tee output_112_ksvd/100a_2s/log
+

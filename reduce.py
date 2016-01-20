@@ -88,7 +88,7 @@ def reduction(input_x, out_dir):
 	return data_reduced
 
 def readLabel(filenames):
-	label = list()
+	label = []
 	for filename in filenames:
 		with open(filename, 'r') as fr:
 			for line in fr:

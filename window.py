@@ -29,16 +29,34 @@ LABEL_DICT = {
 	'meeting': 1,
 	'vacant': 2,
 }
-TIME_INTERVAL = 5 # 5min before, 5min after
+TIME_INTERVAL = 5 # 5min before, 5 min after
 
-def window(input_x, out_dir):
-	data_windowed = list()
+def window(input_x, out_dir, label_filename):
+	data_windowed = []
 	sample_num = len(input_x) / (TIME_INTERVAL*60)
-	for pt in xrange(1,sample_num):
-		instance_cascade = list()
+	lines = []
+	with open(label_filename, 'r') as fp:
+		for line in fp:
+			lines.append( line.rstrip().split(';')[0] )
+
+	line_ptr = 1 ## skip the first line
+	next_stamp = datetime.datetime.strptime(lines[line_ptr], '%Y-%m-%d %H:%M:%S')
+	last_stamp = next_stamp
+	for ptr in xrange(1, sample_num):
+		current_stamp = next_stamp
+		if current_stamp <= last_stamp + datetime.timedelta(seconds=60*TIME_INTERVAL):
+			last_stamp = current_stamp
+			line_ptr += 1
+			next_stamp = datetime.datetime.strptime(lines[line_ptr], '%Y-%m-%d %H:%M:%S')
+		else:
+			last_stamp += datetime.timedelta(seconds=60*TIME_INTERVAL)
+			#print 'skip:', last_stamp, ptr, line_ptr
+			continue
+		instance_cascade = []
 		for instance in input_x[(pt-1)*TIME_INTERVAL*60: (pt+1)*TIME_INTERVAL*60]:
 			instance_cascade.extend(instance)
 		data_windowed.append(instance_cascade)
+	print len(data_windowed)
 	with open('{}/windowed'.format(out_dir), "w") as op:
 		print len(data_windowed)
 		for instance_cascade in data_windowed:
@@ -55,9 +73,10 @@ if __name__ == '__main__':
 	args = vars(args)
 	
 	out_dir = args['out_dir']
-	filenames = [args['raw_filename']]
-	sensor_data = list()
-	for filename in filenames:
+	filenames = args['raw_filename']
+	label_file = args['label_filename']
+	sensor_data = []
+	for filename in [filenames]:
 		path = filename
 		with Timer('open {} with PIR, Light, Sound sensors ...'.format(filename)):
 			data = np.genfromtxt(path, usecols=[1, 4, 13, 16, 18, 26, 31, 32, 37, 38, 39, 40, 9, 11, 22, 23, 41, 10, 12, 24, 25, 29, 30, 42, 43, 44]
@@ -70,14 +89,14 @@ if __name__ == '__main__':
 		data_normalized = normalizer.fit_transform(sensor_data)
 	with Timer('Sparse Coding ...'):
 		from reduce import *
-		num_ataom = 50
-		target_sparsity = 10
+		num_ataom = 100
+		target_sparsity = 2
 		code = sparse_coding(num_ataom, target_sparsity, data_normalized, out_dir)
 		print 'number of zeros: {}/{}'.format(countZeros(code), code.shape[1])
 	with Timer('Sliding Window ...'):
-		data_windowed = window(code, out_dir)
+		data_windowed = window(code, out_dir, label_file)
 		print 'data_windowed:', data_windowed.shape
-	label = readLabel([args['label_filename']])[1:]
+	label = readLabel([label_file])[1:]
 	writeFeature('{}/svm_sparse_windowed_total'.format(out_dir), data_windowed, label)
 	'''
 	from reduce import *
