@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 import os
 import errno
 import cPickle
@@ -11,18 +11,18 @@ class Timer(object):
     def __enter__(self):
         if self.name and self.verbose >= 1:
             print '...', self.name
-        self.start = datetime.now()
+        self.start = datetime.datetime.now()
         return self
 
     def __exit__(self, type, value, traceback):
         if self.verbose >= 2:
             if self.name:
-                print '...', self.name, "done in", datetime.now() - self.start
+                print '...', self.name, "done in", datetime.datetime.now() - self.start
             else:
-                print '... done in', datetime.now() - self.start
+                print '... done in', datetime.datetime.now() - self.start
 
     def now_time(self):
-        return datetime.now() - self.start
+        return datetime.datetime.now() - self.start
 
 def mkdir_p(path):
     try:
