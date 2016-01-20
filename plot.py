@@ -118,4 +118,4 @@ def plot_confusion_matrix():
 	return
 	
 if __name__ == '__main__':
-	plot_confusion_matrix()
+	plot_ksvd_error_recover()
