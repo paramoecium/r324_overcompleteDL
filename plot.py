@@ -33,10 +33,12 @@ def plot_svm_accuracy():
 	plt.show()
 	return
 
-def plot_ksvd_error_recover():
+def plot_ksvd_recover_error():
 	label_file = './truth_data-2014-11-02_to_2014-11-16.txt'
 	error_file = './coding_error'
+	CV_prefiction = './tree_svm_CV_predicted_label'
 	error = np.loadtxt(error_file)
+	label_predicted = np.loadtxt(CV_prefiction)
 
 	import datetime
 	from matplotlib.dates import DateFormatter, drange	
@@ -58,6 +60,17 @@ def plot_ksvd_error_recover():
 	#ax.grid(True)
 	import matplotlib.collections as collections
 	import time
+	for i in xrange(len(label_predicted)):
+		if label_predicted[i] == 2:
+			backgroundColor = 'green'
+		elif label_predicted[i] == 0:
+			backgroundColor = 'yellow'
+		elif label_predicted[i] == 1:
+			backgroundColor = 'red'
+		else:
+			print "unexpected label!!"
+		c = collections.BrokenBarHCollection([(timestamp[0]+float(5*60*(i+1))/86400, float(5*60)/86400)], (1,2), facecolor=backgroundColor, alpha=0.5)
+		ax.add_collection(c)
 	with open(label_file, 'r') as fp:
 		for line in fp:
 			line = line.rstrip().split(';')
@@ -72,13 +85,20 @@ def plot_ksvd_error_recover():
 			else:
 				print "unexpected label!!"
 			#print (timestamp[0]+interval.total_seconds()/86400, float(5*60)/86400)
-			c = collections.BrokenBarHCollection([(timestamp[0]+interval.total_seconds()/86400, float(5*60)/86400)], (0,2), facecolor=backgroundColor, alpha=0.5)
+			c = collections.BrokenBarHCollection([(timestamp[0]+interval.total_seconds()/86400, float(5*60)/86400)], (0,1), facecolor=backgroundColor, alpha=0.5)
 			#c = collections.BrokenBarHCollection([(timestamp[0], 86400)], (0,2), facecolor=backgroundColor, alpha=0.5)
 			ax.add_collection(c)
 	plt.show()
 	return
 
 def plot_atom_MDS():
+	'''
+import numpy as np
+filename = 'output_14_ksvd/100a_2s/codes'
+codes = np.genfromtxt(filename, delimiter=',')
+r_codes = codes[np.random.randint(len(codes),size=1000)]
+np.savetxt('output_14_ksvd/100a_2s/r_codes', r_codes, delimiter=',')
+	'''
 	from sklearn import manifold
 	from sklearn.metrics import euclidean_distances
 	atom_file = './atoms'
@@ -97,10 +117,90 @@ def plot_atom_MDS():
 	plt.show()
 	return
 
+def plot_code_MDS():
+	from sklearn import manifold
+	from sklearn.metrics import euclidean_distances
+	code_file = './r_codes'
+	code = np.loadtxt(code_file, delimiter=',')
+	similarities = euclidean_distances(code)
+	seed = np.random.RandomState(seed=3)
+
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	plt.figure(1, figsize=(4, 3))
+	plt.clf()
+	plt.scatter(pos[:, 0], pos[:, 1], s=20, c='blue', alpha=0.5)
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+	plt.legend(('code', 'XXX'), loc='best')
+	plt.show()
+	return
+
+def plot_atom_n_code_MDS():
+	from sklearn import manifold
+	from sklearn.metrics import euclidean_distances
+	seed = np.random.RandomState(seed=3)
+	atom_file = './atoms'
+	code_file = './r_codes'
+	atoms = np.loadtxt(atom_file, delimiter=',')
+	codes = np.loadtxt(code_file, delimiter=',')
+
+	fig = plt.figure(1, figsize=(4, 3))
+	plt.clf()
+	fig.canvas.set_window_title('100-atom 2-sparse')
+
+	similarities = euclidean_distances(atoms)
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	ax = plt.subplot("131")
+	ax.set_title("100 atoms")
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c='red')
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+	ax.legend(('atom', 'XXX'), loc='best')
+
+	similarities = euclidean_distances(codes)
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	ax = plt.subplot("132")
+	ax.set_title("2-sparse codes of 500 random samples")
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c='blue', alpha=0.5)
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+	ax.legend(('code', 'XXX'), loc='best')
+
+	data_recover = np.dot(codes, atoms)
+	similarities = euclidean_distances(np.concatenate((data_recover, atoms), axis=0))
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	ax = plt.subplot("133")
+	ax.set_title("atoms + recovery")
+	ax.scatter(pos[:len(data_recover), 0], pos[:len(data_recover), 1], s=20, c='blue', alpha=0.5)
+	ax.scatter(pos[len(data_recover):, 0], pos[len(data_recover):, 1], s=20, c='red')
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+	ax.legend(('sample', 'atom'), loc='best')
+
+	plt.show()
+	return
 def plot_confusion_matrix():
-	cm = [[ 183,   74,   32],[ 143,  918,  160],[ 123,   33, 2365]]
+	LABEL_DICT = {'selfStudy': 0, 'meeting': 1, 'vacant': 2}
+	label_file = './truth_data-2014-11-02_to_2014-11-16.txt'
+	CV_prefiction = './CV_predicted_label'
+	label_predicted = np.loadtxt(CV_prefiction)
+	true_label = []
+	with open(label_file, 'r') as fr:
+		for line in fr:
+			true_label.append(LABEL_DICT[ line.rstrip().split(';')[1] ])
+	true_label = true_label[1:]
+
+	from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+	print(classification_report(true_label, label_predicted, target_names=['selfStudy', 'meeting', 'vacant']))
+	score = accuracy_score(true_label, label_predicted)
+	cm = confusion_matrix(true_label, label_predicted)
 	cm = np.array(cm)
 	cm_normalized = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+	print cm
 	print cm_normalized
 	plt.figure()
 	title = 'Confusion matrix'
@@ -118,4 +218,10 @@ def plot_confusion_matrix():
 	return
 	
 if __name__ == '__main__':
-	plot_ksvd_error_recover()
+	#plot_ksvd_error_iteration()
+	#plot_svm_accuracy()
+	plot_ksvd_recover_error()
+	#plot_atom_MDS()
+	#plot_code_MDS()
+	#plot_atom_n_code_MDS()
+	#plot_confusion_matrix()

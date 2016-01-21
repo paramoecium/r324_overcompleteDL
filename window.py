@@ -33,7 +33,7 @@ LABEL_DICT = {
 TIME_INTERVAL = 5 # 5min before, 5 min after
 
 def window(input_x, input_timestamps, out_dir, label_filename):
-	hdf5_filename = '{}/windowed'.format(out_dir)
+	hdf5_filename = '{}windowed.hdf5'.format(out_dir)
 	f = tables.open_file(hdf5_filename, mode='w')
 	f.create_earray(f.root, 'feature', tables.Float32Atom(), (0, TIME_INTERVAL*60*2*len(input_x[0])))
 	f.create_earray(f.root, 'label', tables.Float32Atom(), (0, 1))
@@ -64,13 +64,14 @@ def window(input_x, input_timestamps, out_dir, label_filename):
 		#print ptr, label_ptr, current_stamp, datetime.datetime.fromtimestamp(input_timestamps[(ptr-1)*TIME_INTERVAL*60]), datetime.datetime.fromtimestamp(input_timestamps[(ptr+1)*TIME_INTERVAL*60 - 1])
 		for instance in input_x[(ptr-1)*TIME_INTERVAL*60: (ptr+1)*TIME_INTERVAL*60]:
 			instance_cascade.extend(instance)
+		label = LABEL_DICT[lines[label_ptr][1].rstrip()]
 		'''
 		data_windowed.append(instance_cascade)
 		labels.append(lines[label_ptr][1])
 		'''
 		f = tables.open_file(hdf5_filename, mode='a')
 		f.root.feature.append(np.array(instance_cascade).reshape(1,len(instance_cascade))) # must input ndarray of size (1,NUM_FEATURE)
-		f.root.label.append( np.array([[lines[label_ptr][1]]]) ) # must input ndarray of size (1,1)
+		f.root.label.append( np.array([[label]]) ) # must input ndarray of size (1,1)
 		f.close()
 	'''
 	print len(data_windowed)
@@ -124,7 +125,7 @@ if __name__ == '__main__':
 		#print 'data_windowed:', data_windowed.shape
 		window(code, timestamps, out_dir, label_file)
 	#label = readLabel([label_file])[1:]
-	f = tables.open_file('{}/windowed'.format(out_dir), mode='r')
+	f = tables.open_file('{}windowed.hdf5'.format(out_dir), mode='r')
 	data_windowed = np.array(f.root.feature)
 	label = np.array(f.root.label).flatten()
 	f.close()
