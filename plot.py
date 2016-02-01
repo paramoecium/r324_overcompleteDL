@@ -92,13 +92,6 @@ def plot_ksvd_recover_error():
 	return
 
 def plot_atom_MDS():
-	'''
-import numpy as np
-filename = 'output_14_ksvd/100a_2s/codes'
-codes = np.genfromtxt(filename, delimiter=',')
-r_codes = codes[np.random.randint(len(codes),size=1000)]
-np.savetxt('output_14_ksvd/100a_2s/r_codes', r_codes, delimiter=',')
-	'''
 	from sklearn import manifold
 	from sklearn.metrics import euclidean_distances
 	atom_file = './atoms'
@@ -118,75 +111,150 @@ np.savetxt('output_14_ksvd/100a_2s/r_codes', r_codes, delimiter=',')
 	return
 
 def plot_code_MDS():
+	'''
+## for workstation
+import numpy as np
+sample_index = np.random.randint(4032,size=1000)
+params = ['100a_2s','100a_5s','100a_10s']
+for param in params:
+	codes = np.genfromtxt('output_14_ksvd/{}/codes'.format(param), delimiter=',')
+	r_codes = codes[sample_index * 300]
+	np.savetxt('../r_codes_{}'.format(param), r_codes, delimiter=',')
+
+atoms = np.loadtxt('output_14_ksvd/{}/atoms'.format(param), delimiter=',')
+raw = np.dot(codes, atoms)
+r_codes_original = raw[sample_index * 300]
+np.savetxt('../r_codes_original', r_codes_original, delimiter=',')
+
+LABEL_DICT = {'selfStudy': 0, 'meeting': 1, 'vacant': 2}
+label = []
+with open('data/truth_data-2014-11-02_to_2014-11-16.txt', 'r') as fr:
+	for line in fr:
+		label.append(LABEL_DICT[ line.rstrip().split(';')[1] ])
+
+sample_label = []
+for i in sample_index:
+	sample_label.append(label[i])
+
+np.savetxt('../sample_label', sample_label)
+	'''
 	from sklearn import manifold
-	from sklearn.metrics import euclidean_distances
-	code_file = './r_codes'
-	code = np.loadtxt(code_file, delimiter=',')
-	similarities = euclidean_distances(code)
+	from sklearn.metrics.pairwise import pairwise_distances
+	sample_label = np.loadtxt('sample_label')
+	COLOR_DICT = {0:'yellow', 1:'red', 2:'green'}
+	sample_color = [COLOR_DICT[l] for l in sample_label]
 	seed = np.random.RandomState(seed=3)
 
+	fig = plt.figure(1, figsize=(8, 6))
+	plt.clf()
+	fig.canvas.set_window_title('100a_ks_1000sample')
+
+	codes = np.loadtxt('r_codes_original', delimiter=',')
+	similarities = pairwise_distances(codes, metric='euclidean')
+	#similarities = pairwise_distances(codes, metric='cosine')
 	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
 	pos = mds.fit(similarities).embedding_
-	plt.figure(1, figsize=(4, 3))
-	plt.clf()
-	plt.scatter(pos[:, 0], pos[:, 1], s=20, c='blue', alpha=0.5)
+	ax = plt.subplot("141")
+	ax.set_title("original")
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c=sample_color, alpha=0.5)
 	plt.gca().xaxis.set_major_locator(plt.NullLocator())
 	plt.gca().yaxis.set_major_locator(plt.NullLocator())
-	plt.legend(('code', 'XXX'), loc='best')
+
+	codes = np.loadtxt('r_codes_100a_10s', delimiter=',')
+	similarities = pairwise_distances(codes, metric='euclidean')
+	#similarities = pairwise_distances(codes, metric='cosine')
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	ax = plt.subplot("142")
+	ax.set_title("100a_10s")
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c=sample_color, alpha=0.5)
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+
+	codes = np.loadtxt('r_codes_100a_5s', delimiter=',')
+	similarities = pairwise_distances(codes, metric='euclidean')
+	#similarities = pairwise_distances(codes, metric='cosine')
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	ax = plt.subplot("143")
+	ax.set_title("100a_5s")
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c=sample_color, alpha=0.5)
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+
+	codes = np.loadtxt('r_codes_100a_2s', delimiter=',')
+	similarities = pairwise_distances(codes, metric='euclidean')
+	#similarities = pairwise_distances(codes, metric='cosine')
+	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
+	pos = mds.fit(similarities).embedding_
+	ax = plt.subplot("144")
+	ax.set_title("100a_2s")
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c=sample_color, alpha=0.5)
+	plt.gca().xaxis.set_major_locator(plt.NullLocator())
+	plt.gca().yaxis.set_major_locator(plt.NullLocator())
+	
 	plt.show()
 	return
 
 def plot_atom_n_code_MDS():
 	from sklearn import manifold
-	from sklearn.metrics import euclidean_distances
+	from sklearn.metrics.pairwise import pairwise_distances
 	seed = np.random.RandomState(seed=3)
 	atom_file = './atoms'
-	code_file = './r_codes'
+	code_file = './r_codes_100a_2s'
 	atoms = np.loadtxt(atom_file, delimiter=',')
 	codes = np.loadtxt(code_file, delimiter=',')
+	sample_label = np.loadtxt('sample_label')
+	COLOR_DICT = {0:'yellow', 1:'red', 2:'green'}
+	sample_color = [COLOR_DICT[l] for l in sample_label]
 
 	fig = plt.figure(1, figsize=(4, 3))
 	plt.clf()
 	fig.canvas.set_window_title('100-atom 2-sparse')
 
-	similarities = euclidean_distances(atoms)
+	#similarities = pairwise_distances(atoms, metric='euclidean')
+	similarities = pairwise_distances(atoms, metric='cosine')
 	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
 	pos = mds.fit(similarities).embedding_
 	ax = plt.subplot("131")
 	ax.set_title("100 atoms")
-	ax.scatter(pos[:, 0], pos[:, 1], s=20, c='red')
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c='blue')
 	plt.gca().xaxis.set_major_locator(plt.NullLocator())
 	plt.gca().yaxis.set_major_locator(plt.NullLocator())
 	ax.legend(('atom', 'XXX'), loc='best')
 
-	similarities = euclidean_distances(codes)
+	#similarities = pairwise_distances(codes, metric='euclidean')
+	similarities = pairwise_distances(codes, metric='cosine')
 	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
 	pos = mds.fit(similarities).embedding_
 	ax = plt.subplot("132")
-	ax.set_title("2-sparse codes of 500 random samples")
-	ax.scatter(pos[:, 0], pos[:, 1], s=20, c='blue', alpha=0.5)
+	ax.set_title("2-sparse codes of 1000 random samples")
+	ax.scatter(pos[:, 0], pos[:, 1], s=20, c=sample_color, alpha=0.5)
 	plt.gca().xaxis.set_major_locator(plt.NullLocator())
 	plt.gca().yaxis.set_major_locator(plt.NullLocator())
 	ax.legend(('code', 'XXX'), loc='best')
 
 	data_recover = np.dot(codes, atoms)
-	similarities = euclidean_distances(np.concatenate((data_recover, atoms), axis=0))
+	#similarities = pairwise_distances(np.concatenate((data_recover, atoms), axis=0), metric='euclidean')
+	similarities = pairwise_distances(np.concatenate((data_recover, atoms), axis=0), metric='cosine')
 	mds = manifold.MDS(n_components=2, max_iter=3000, eps=1e-9, random_state=seed, dissimilarity="precomputed", n_jobs=1)
 	pos = mds.fit(similarities).embedding_
 	ax = plt.subplot("133")
 	ax.set_title("atoms + recovery")
-	ax.scatter(pos[:len(data_recover), 0], pos[:len(data_recover), 1], s=20, c='blue', alpha=0.5)
-	ax.scatter(pos[len(data_recover):, 0], pos[len(data_recover):, 1], s=20, c='red')
+	ax.scatter(pos[:len(data_recover), 0], pos[:len(data_recover), 1], s=20, c=sample_color, alpha=0.5)
+	ax.scatter(pos[len(data_recover):, 0], pos[len(data_recover):, 1], s=20, c='blue')
 	plt.gca().xaxis.set_major_locator(plt.NullLocator())
 	plt.gca().yaxis.set_major_locator(plt.NullLocator())
 	ax.legend(('sample', 'atom'), loc='best')
 
 	plt.show()
 	return
+
 def plot_confusion_matrix():
 	LABEL_DICT = {'selfStudy': 0, 'meeting': 1, 'vacant': 2}
 	label_file = './truth_data-2014-11-02_to_2014-11-16.txt'
-	CV_prefiction = './CV_predicted_label'
+	#CV_prefiction = './CV_predicted_label'
+	CV_prefiction = './tree_svm_CV_predicted_label'
 	label_predicted = np.loadtxt(CV_prefiction)
 	true_label = []
 	with open(label_file, 'r') as fr:
@@ -216,12 +284,70 @@ def plot_confusion_matrix():
 	plt.xlabel('Predicted label')
 	plt.show()
 	return
+
+def plot_topics_n_label():
+	import datetime
+	from matplotlib.dates import DateFormatter, drange, AutoDateLocator
+	import colorsys
+	start_date = datetime.datetime( 2014, 9, 1)
+	end_date = datetime.datetime( 2015, 9, 26)
+	label_file = './truth_data-2014-09-01_to_2014-09-26.txt'
+	topic_file = '10-topic_LDA_topics_2014-09-01_to_2014-09-26'
+	unit = 300 # seconds
+	day = 25
+	import matplotlib.collections as collections
+
+	topic_distribution = np.loadtxt(topic_file, delimiter=',')
+	fig, ax = plt.subplots()
+	fig.set_size_inches(3*day,1)
+	timestamp = drange(start_date, end_date, datetime.timedelta(seconds=unit))
+	label_timestamp = []
+	with open(label_file, 'r') as fp:
+		for line in fp:
+			line = line.rstrip().split(';')
+			currentTimestamp = datetime.datetime.strptime(line[0], '%Y-%m-%d %H:%M:%S')
+			label_timestamp.append(currentTimestamp)
+			interval = currentTimestamp - start_date
+			label = line[1]
+			if "vacant" in label:
+				backgroundColor = 'green'
+			elif "selfStudy" in label:
+				backgroundColor = 'yellow'
+			elif "meeting" in label:
+				backgroundColor = 'red'
+			else:
+				print "unexpected label!!"
+			#print (timestamp[0]+interval.total_seconds()/86400, float(5*60)/86400)
+			c = collections.BrokenBarHCollection([(timestamp[0]+interval.total_seconds()/86400, float(5*60)/86400)], (0,1.2), facecolor=backgroundColor, alpha=0.5)
+			#c = collections.BrokenBarHCollection([(timestamp[0], 86400)], (0,2), facecolor=backgroundColor, alpha=0.5)
+			ax.add_collection(c)
+	'''
+	#for 112-day only
+	with open('timestamps_for_plot_2014-09-01_to_2015-02-01', 'r') as fp:
+		for line in fp:
+			label_timestamp.append(datetime.datetime.strptime(line.rstrip(), '%Y-%m-%d %H:%M:%S'))
+	'''
+	print len(label_timestamp), topic_distribution.shape
+	ax.set_xlabel('time')
+	ax.xaxis.set_major_locator(AutoDateLocator(minticks=6*day))
+	ax.xaxis.set_major_formatter( DateFormatter('%m-%d %H:%M') )
+	ax.set_xlim(label_timestamp[0], label_timestamp[-1])
+	ax.set_ylim(0,1.1)
+	ax.set_ylabel('topic proportion')
+	randHSVcolors = [(i/10.0,0.6,1) for i in xrange(10)]
+	randRGBcolors = [colorsys.hsv_to_rgb(c[0],c[1],c[2]) for c in randHSVcolors]
+	ax.stackplot(label_timestamp[1:], topic_distribution.T,colors=randRGBcolors)
+	#ax.stackplot(label_timestamp, topic_distribution.T,colors=randRGBcolors)
+	#plt.show()
+	plt.savefig(topic_file+'.png', bbox_inches='tight', dpi=400)
+	return
 	
 if __name__ == '__main__':
 	#plot_ksvd_error_iteration()
 	#plot_svm_accuracy()
-	plot_ksvd_recover_error()
+	#plot_ksvd_recover_error()
 	#plot_atom_MDS()
 	#plot_code_MDS()
 	#plot_atom_n_code_MDS()
 	#plot_confusion_matrix()
+	plot_topics_n_label()
