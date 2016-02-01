@@ -5,8 +5,9 @@ from utils import *
 
 import random
 from sklearn.metrics import confusion_matrix
-from sklearn.metrics import f1_score
+from sklearn.metrics import classification_report
 from sklearn.metrics import accuracy_score
+from sklearn.cross_validation import KFold
 
 #from svm import svm_problem, svm_parameter
 #from svmutil import svm_train, svm_predict, svm_save_model, svm_read_problem
@@ -36,13 +37,15 @@ def readFeature(fileName, featureNum):
 	return features, labels
 
 def bracketing(X, Y):
+	X = np.array(X)
+	Y = np.array(Y)
 	#clf = svm.SVC(kernel='rbf', class_weight={0: 60, 1: 3, 2: 1})
 	clf = svm.SVC(kernel='linear', class_weight='auto')
 	#clf = svm.SVC(kernel='polyss', class_weight='auto')
 	C_s = np.logspace(-5, 10, 15)
 
-	scores = list()
-	scores_std = list()
+	scores = []
+	scores_std = []
 	for C in C_s:
 		clf.C = C
 		## poly
@@ -52,7 +55,16 @@ def bracketing(X, Y):
 		clf.coef0
 		'''
 		with Timer('Cross Validation(C={}) ...'.format(C)):
-			this_scores = cross_validation.cross_val_score(clf, X, Y, n_jobs=4) ## 4 CPU core
+			this_scores = []
+			#kf = KFold(len(X), n_folds=3, shuffle=True)
+			kf = KFold(len(X), n_folds=3, shuffle=False)
+			for train_index, test_index in kf:
+				X_train, X_test = X[train_index], X[test_index]
+				Y_train, Y_test = Y[train_index], Y[test_index]
+				clf.fit(X_train, Y_train)
+				p_labels = clf.predict(X_test)
+				score = accuracy_score(Y_test, p_labels)
+				this_scores.append(score)
 		scores.append(np.mean(this_scores))
 		scores_std.append(np.std(this_scores))
 		print "accuracy mean:", scores[-1], "std:", scores_std[-1]
@@ -74,7 +86,9 @@ def tree_bracketing(X, Y):
 	for C in C_s:
 		clf_0.C = C
 		with Timer('Cross Validation(C={}) ...'.format(C)):
-			this_scores = cross_validation.cross_val_score(clf_0, X_0, Y_0, n_jobs=4) ## 4 CPU core
+			#kf = KFold(len(X), n_folds=3, shuffle=True)
+			kf = KFold(len(X), n_folds=3, shuffle=False)
+			this_scores = cross_validation.cross_val_score(clf_0, X_0, Y_0, cv=kf, n_jobs=4) ## 4 CPU core
 		scores.append(np.mean(this_scores))
 		scores_std.append(np.std(this_scores))
 		print "accuracy mean:", scores[-1], "std:", scores_std[-1]
@@ -90,15 +104,16 @@ def tree_bracketing(X, Y):
 	for C in C_s:
 		clf_1.C = C
 		with Timer('Cross Validation(C={}) ...'.format(C)):
-			this_scores = cross_validation.cross_val_score(clf_1, X_1, Y_1, n_jobs=4) ## 4 CPU core
+			#kf = KFold(len(X), n_folds=3, shuffle=True)
+			kf = KFold(len(X), n_folds=3, shuffle=False)
+			this_scores = cross_validation.cross_val_score(clf_1, X_1, Y_1, cv=kf, n_jobs=4) ## 4 CPU core
 		scores.append(np.mean(this_scores))
 		scores_std.append(np.std(this_scores))
 		print "accuracy mean:", scores[-1], "std:", scores_std[-1]
 	C_1 = C_s[np.argmax(scores)]
 	print 'best C:', C_1
 	'''
-	from sklearn.cross_validation import KFold
-	kf = KFold(len(X), n_folds=3, shuffle=True)
+	kf = KFold(len(X), n_folds=3, shuffle=False)
 	scores = list()
 	CV_prediction = np.zeros(len(Y))
 	for train_index, test_index in kf:
@@ -134,9 +149,15 @@ def best_CV_prediction(X, Y):
 	clf.C = best_svm_C
 	with Timer('Cross Validation Prediction(C={}) ...'.format(best_svm_C)):
 		Y_predicted = cross_validation.cross_val_predict(clf, X, Y, n_jobs=4) ## 4 CPU core
-	print confusion_matrix(Y_predicted, Y)
-	print f1_score(Y_predicted, Y, average='weighted')
+	print confusion_matrix(Y, Y_predicted)
+	print(classification_report(Y, Y_predicted, target_names=['selfStudy', 'meeting', 'vacant']))
 	np.savetxt('./output_14_ksvd/100a_2s/CV_predicted_label',Y_predicted,fmt='%i')
+
+def svm_baseline():
+	file_path = 'data/merge-2014-09-01_to_2015-01-31.dat'
+	raw_data = np.loadtxt(file_path, delimiter=',')
+	raw_data = raw_data[:,1:]
+	labels = readLabel(filenames)
 
 if __name__ == '__main__':
 	argparser = argparse.ArgumentParser()
@@ -146,8 +167,8 @@ if __name__ == '__main__':
 	args = vars(args)
 	svm_file_path = args['svm_file']
 	MEASUREMENT = int(args['num_measurement'])
-
-	X, Y = readFeature(svm_file_path, MEASUREMENT)
-	#bracketing(X, Y)
+	with Timer('Reading SVM-format file ...'):
+		X, Y = readFeature(svm_file_path, MEASUREMENT)
+	bracketing(X, Y)
 	#best_CV_prediction(X, Y)
-	tree_bracketing(X, Y)
+	#tree_bracketing(X, Y)

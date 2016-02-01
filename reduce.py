@@ -125,34 +125,33 @@ def readFeature(fileName, featureNum):
 
 if __name__ == '__main__':
 	argparser = argparse.ArgumentParser()
-	argparser.add_argument('windowed_filename', type=str, help='the windowed data')
+	argparser.add_argument('raw_filename', type=str, help='the raw data')
 	argparser.add_argument('label_filename', type=str, help='the label data')
 	argparser.add_argument('out_dir', type=str, help='the file of output data')
-	argparser.add_argument('num_measurement', type=str, help='number of measurements')
 	args = argparser.parse_args()
 	args = vars(args)
 
 	out_dir = args['out_dir']
-	windowed_file = args['windowed_filename']
-	MEASUREMENT = args['num_measurement']
+	filename = args['raw_filename']
+	label_file = args['label_filename']
 
-	data_windowed = np.loadtxt(windowed_file, delimiter=',')
-	print data_windowed.shape
-	with Timer('Normalizing ...'):
-		normalizer = MinMaxScaler() # feature range (0,1)
-		data_windowed = normalizer.fit_transform(data_windowed)
-	with Timer('Sparse Coding ...'):
-		code = sparse_coding(N_ATOM, data_windowed, out_dir)
-		print 'number of zeros: {}/{}'.format(countZeros(code), code.shape[1])
-		label = readLabel([args['label_filename']])[1:]
-		'''
-		cutIndex = int(TRAIN_SET_RATIO*len(data_reduced))
-		writeFeature('{}/svm_sparse_train'.format(out_dir), code[:cutIndex], label[:cutIndex]) 
-		writeFeature('{}/svm_sparse_test'.format(out_dir), code[cutIndex:], label[cutIndex:])
-		'''
-		writeFeature('{}/svm_sparse_total'.format(out_dir), code, label) 
-	with Timer('Random Projection ...'):
-		data_reduced = reduction(code, out_dir)
-	#data_reduced = np.loadtxt('{}/projection'.format(out_dir), delimiter=',')
-	label = readLabel([args['label_filename']])[1:]
-	writeFeature('{}/svm_compressed_total'.format(out_dir), data_reduced, label)
+	sensor_data = []
+	timestamps = []
+	for path in [filename]:
+		with Timer('open {} with PIR, Light, Sound sensors ...'.format(path)):
+			data = np.genfromtxt(path, usecols=[1, 4, 13, 16, 18, 26, 31, 32, 37, 38, 39, 40, 9, 11, 22, 23, 41, 10, 12, 24, 25, 29, 30, 42, 43, 44], delimiter=',').tolist()
+			timestamp = np.genfromtxt(path, usecols=[0] , delimiter=',').tolist()
+			print "# of data:", len(data)
+			sensor_data.extend(data)
+			timestamps.extend(timestamp)
+	with Timer('Standardizing ...'):
+		from sklearn.preprocessing import MinMaxScaler, StandardScaler
+		stdScalar = StandardScaler() # feature range (0,1)
+		data_standardized = stdScalar.fit_transform(sensor_data)
+	print data_standardized.shape
+	cov = np.cov(np.array(sensor_data).T)
+	U, s, V = np.linalg.svd(cov, full_matrices=True)
+	print s
+	cov = np.cov(data_standardized.T)
+	U, s, V = np.linalg.svd(cov, full_matrices=True)
+	print s
